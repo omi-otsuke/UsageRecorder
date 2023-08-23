@@ -1,0 +1,12 @@
+# 凡例 -------------------------------
+# user_name: 利用者名
+# connection_account: 接続アカウント
+# use_purpose: 使用目的
+# server_names: サーバー名 (リスト形式)
+# remarks: 備考
+# -----------------------------------
+user_name = "利用者名例"
+connection_account = "example-account"
+use_purpose = "使用目的例"
+server_names = ["Server A", "Server b", "ServerC", "Server A", "Server E"]
+remarks = "備考例"

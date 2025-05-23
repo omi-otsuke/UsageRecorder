@@ -47,7 +47,7 @@ It allows users to input information such as start/end times, user name, connect
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/your-username/UsageRecorder.git
+   git clone https://github.com/omi-otsuke/UsageRecorder.git
    cd UsageRecorder
    ```
 

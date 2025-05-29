@@ -1,8 +1,9 @@
 from collections.abc import Iterable
 import datetime
-import logging
 import os
+import sys
 import tomllib
+import traceback
 import wx.adv
 import vld
 import ur
@@ -10,11 +11,11 @@ import ure
 
 # TODO(Low): 項目を表す変数名をできるだけ統一させる。
 # TODO(Mid): 複数人で使用した時、利用者ごとにモード判別ができるようにする。
-# TODO(Mid): 実行時エラーが発生した場合、トレースバックをログに出力する。
 
 
 class UsageRecorderApp(wx.App):
     def OnInit(self):
+        wx.Log.SetActiveTarget(LogFile("../log/error.log"))
         frame = InputFrame()
         frame.Show()
         return True
@@ -77,16 +78,12 @@ class InputFrame(wx.Frame):
 
         try:
             self.usage_recorder = ur.UsageRecorder()
-        except FileNotFoundError as e:
-            logging.exception(
-                "ファイルが見つかりません。エラー内容を以下に出力します。"
-            )
-            wx.MessageBox(
-                str(e),
-                "ファイルが見つかりません",
-                wx.OK | wx.ICON_ERROR,
-            )
-            self.Destroy()
+        except FileNotFoundError:
+            wx.LogError(traceback.format_exc())
+            sys.exit("FileNotFoundError")
+        except OSError:
+            wx.LogError(traceback.format_exc())
+            sys.exit("OSError")
         self.recording_state = self.usage_recorder.check_state()
 
         # Excelのデータ入力状況に応じて記録モードを決定する。
@@ -467,14 +464,30 @@ class DecisionButtonPanel(wx.Panel):
         self.SetSizer(layout)
 
 
+class LogFile(wx.Log):
+    """ログファイルに出力するためのログターゲット。"""
+
+    def __init__(self, filepath):
+        wx.Log.__init__(self)
+        formatter = CustomLogFormatter()
+        self.SetFormatter(formatter)
+        self.filepath = filepath
+
+    def DoLogText(self, message):
+        with open(self.filepath, "a", encoding="utf-8") as f:
+            f.write(message + os.linesep)
+
+
+class CustomLogFormatter(wx.LogFormatter):
+    def Format(self, level, message, info):
+        timestamp = datetime.datetime.fromtimestamp(info.timestamp)
+        return f"{timestamp:%Y-%m-%d %H:%M:%S} - {message}"
+
+
 if __name__ == "__main__":
-    fmt = "%(asctime)s - %(levelname)s - %(message)s"
-    logging.basicConfig(filename="../log/error.log", level=logging.ERROR, format=fmt)
+    wx.Log.SetActiveTarget(LogFile("../log/error.log"))
     try:
         app = UsageRecorderApp()
         app.MainLoop()
     except Exception as e:
-        logging.exception(
-            "想定外のエラーが発生しました。エラー内容を以下に出力します。"
-        )
         wx.LogError(f"想定外のエラーが発生しました: {e}")

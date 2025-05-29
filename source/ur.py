@@ -20,6 +20,10 @@ class UsageRecorder:
         except FileNotFoundError as e:
             raise FileNotFoundError(
                 f"指定されたファイルが見つかりません: {self.output_file_path}"
+            ) from e
+        except OSError as e:
+            raise OSError(
+                f"指定されたファイルが見つかりません: {self.output_file_path}"
                 + os.linesep
                 + "ファイルがネットワークフォルダにある場合、認証情報が正しくない可能性があります。"
             ) from e

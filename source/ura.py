@@ -1,5 +1,6 @@
 from collections.abc import Iterable
 import datetime
+import logging
 import os
 import tomllib
 import wx.adv
@@ -74,7 +75,18 @@ class InputFrame(wx.Frame):
         root_layout.Fit(root_panel)
         self.Fit()
 
-        self.usage_recorder = ur.UsageRecorder()
+        try:
+            self.usage_recorder = ur.UsageRecorder()
+        except FileNotFoundError as e:
+            logging.exception(
+                "ファイルが見つかりません。エラー内容を以下に出力します。"
+            )
+            wx.MessageBox(
+                str(e),
+                "ファイルが見つかりません",
+                wx.OK | wx.ICON_ERROR,
+            )
+            self.Destroy()
         self.recording_state = self.usage_recorder.check_state()
 
         # Excelのデータ入力状況に応じて記録モードを決定する。
@@ -456,5 +468,13 @@ class DecisionButtonPanel(wx.Panel):
 
 
 if __name__ == "__main__":
-    app = UsageRecorderApp()
-    app.MainLoop()
+    fmt = "%(asctime)s - %(levelname)s - %(message)s"
+    logging.basicConfig(filename="../log/error.log", level=logging.ERROR, format=fmt)
+    try:
+        app = UsageRecorderApp()
+        app.MainLoop()
+    except Exception as e:
+        logging.exception(
+            "想定外のエラーが発生しました。エラー内容を以下に出力します。"
+        )
+        wx.LogError(f"想定外のエラーが発生しました: {e}")

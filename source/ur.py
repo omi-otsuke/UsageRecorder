@@ -15,7 +15,14 @@ class UsageRecorder:
             self.system_conf = tomllib.load(f)
         self.base_path = os.path.join(os.path.dirname(__file__), "..")
         self.output_file_path = self.system_conf["output_file_path"]
-        self.workbook = load_workbook(self.output_file_path)
+        try:
+            self.workbook = load_workbook(self.output_file_path)
+        except FileNotFoundError as e:
+            raise FileNotFoundError(
+                f"指定されたファイルが見つかりません: {self.output_file_path}"
+                + os.linesep
+                + "ファイルがネットワークフォルダにある場合、認証情報が正しくない可能性があります。"
+            ) from e
         self.sheet = self.workbook[self.system_conf["sheet_name"]]
         self.BASE_ROW = self.system_conf["base_row"]
 

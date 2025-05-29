@@ -30,13 +30,18 @@ It allows users to input information such as start/end times, user name, connect
 
 ## Installation
 
+### Prerequisites
+
+You will need to prepare the destination Excel file in advance. Excel samples in a format compatible with this tool are listed below, so please download them as needed and place them wherever you like:  
+[automation_sample.xlsx](https://github.com/omi-otsuke/UsageRecorder/raw/refs/heads/master/output/automation_sample.xlsx)
+
 ### For user
 
 1. Download the zip file from the link below:
 
-   [Download UsageRecorder](https://github.com/omi-otsuke/UsageRecorder/releases/download/v1.0.0/UsageRecorder.zip)
+   [Download UsageRecorder (zip)](https://github.com/omi-otsuke/UsageRecorder/releases/download/v1.0.0/UsageRecorder.zip)
 
-2. Unzip the downloaded zip file. And place the downloaded folder in the appropriate location and place the shortcut file wherever you like, as needed.
+2. Unzip the downloaded zip file. And place the unzipped folder in the appropriate location and place the shortcut file wherever you like, as needed.
 
 3. Prepare the configuration file:
 
@@ -90,7 +95,7 @@ It allows users to input information such as start/end times, user name, connect
 
 ## Project Structure
 
-```text
+```plain text
 UsageRecorder/
 ├── source/
 │   ├── ur.py                # Implementation of the UsageRecorder class
@@ -102,9 +107,11 @@ UsageRecorder/
 │   └── user_data.toml       # Template for user data
 ├── test/
 │   └── test_ur.py           # Tests for the UsageRecorder class
+├── requirements.txt         # Required Python libraries
+├── build.bat                # Batch file for building on Windows
 ├── README.md                # This file
-├── .gitignore               # Specifies files to exclude from Git
-└── requirements.txt         # Required Python libraries
+├── LICENSE                  # License declaration file
+└── .gitignore               # Specifies files to exclude from Git
 ```
 
 ---
@@ -116,26 +123,27 @@ UsageRecorder/
 The configuration file includes the following settings:
 
 ```toml
-output_file_path = "../output/usage_records.xlsx"  # Path to the output Excel file
+output_file_path = '\\server\directory\usage_records.xlsx' # Path to the output Excel file
 sheet_name = "Sheet1"                              # Name of the Excel sheet
 base_row = 4                                       # Starting row for data
-purpose_choices = ["Purpose A", "Purpose B", "Purpose C"]  # Choices for purpose of use
-destination_names = ["Server A", "Server B"]       # Target server names
+purpose_choices = ["Purpose A", "Purpose B", "Purpose C"] # Choices for purpose of use
+destination_names = ["Server A", "Server B", "Server C"] # Target server names
+application = 'C:\WINDOWS\system32\mstsc.exe'      # Executable path after the program has finished
+arguments = ["mstsc", 'C:\Users\your-name\Desktop\example.rdp'] # Arguments to the executable
 ```
 
 ### `conf/user_data.toml`
 
-This file is used to store user-specific data, such as the user name, connection account, purpose of use, server names, and remarks. It serves as an example or template for user input. Below is an example structure:
+This file is used to store user-specific data, such as the user name, connection account, purpose of use, server names, and remarks. You can edit this file to pre-fill the input fields in the application.
+Below is an example structure:
 
 ```toml
 user_name = "Example User"
 connection_account = "example-account"
 use_purpose = "Example Purpose"
-server_names = ["Server A", "Server B", "Server C"]
+server_names = ["Server A", "Server C"]
 remarks = "Example remarks"
 ```
-
-You can edit this file to pre-fill the input fields in the application.
 
 ---
 

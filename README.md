@@ -40,7 +40,7 @@ You will need to prepare the destination Excel file in advance. Excel samples in
 
 1. Download the zip file from the link below:
 
-   [Download UsageRecorder (zip)](https://github.com/omi-otsuke/UsageRecorder/releases/download/v1.0.0/UsageRecorder.zip)
+   [Download UsageRecorder (zip)](https://github.com/omi-otsuke/UsageRecorder/releases/download/v1.1.0/UsageRecorder.zip)
 
 2. Unzip the downloaded zip file. And place the unzipped folder in the appropriate location and place the shortcut file wherever you like, as needed.
 

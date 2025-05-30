@@ -101,6 +101,7 @@ UsageRecorder/
 ├── source/
 │   ├── ur.py                # Implementation of the UsageRecorder class
 │   ├── ura.py               # Main code for the GUI application
+│   ├── urcmn.py             # Definition of the common functions
 │   ├── ure.py               # Definition of the UsageRecordEntity class
 │   ├── urlog.py             # Definition of the logging related classes
 │   └── vld.py               # Validation logic
@@ -130,7 +131,7 @@ The configuration file includes the following settings:
 output_file_path = '\\server\directory\usage_records.xlsx' # Path to the output Excel file
 sheet_name = "Sheet1"                              # Name of the Excel sheet
 base_row = 4                                       # Starting row for data
-log_file_path = "../log/error.log"                 # Path to the log file
+log_file_path = "log/error.log"                    # Path to the log file
 purpose_choices = ["Purpose A", "Purpose B", "Purpose C"] # Choices for purpose of use
 destination_names = ["Server A", "Server B", "Server C"] # Target server names
 application = 'C:\WINDOWS\system32\mstsc.exe'      # Executable path after the program has finished

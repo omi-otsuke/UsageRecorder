@@ -4,6 +4,7 @@ import os
 import sys
 import tomllib
 import wx.adv
+import urcmn
 import urlog
 import vld
 import ur
@@ -15,12 +16,7 @@ import ure
 
 class UsageRecorderApp(wx.App):
     def OnInit(self):
-        system_conf_file_path = os.path.join(
-            os.path.dirname(__file__), "../conf/system_conf.toml"
-        )
-        with open(system_conf_file_path, "rb") as f:
-            self.system_conf = tomllib.load(f)
-        wx.Log.SetActiveTarget(urlog.LogFile(self.system_conf["log_file_path"]))
+        wx.Log.SetActiveTarget(urlog.LogFile(urcmn.get_log_dir()))
         # NOTE: LogXXXインスタンスを属性で保持することによって、segmentation faultの
         # 発生を防止している。
         self.log_message_box = urlog.LogMessageBox()
@@ -36,10 +32,7 @@ class InputFrame(wx.Frame):
             self, None, wx.ID_ANY, "サーバー使用履歴記録ツール", size=(500, 400)
         )
 
-        system_conf_file_path = os.path.join(
-            os.path.dirname(__file__), "../conf/system_conf.toml"
-        )
-        with open(system_conf_file_path, "rb") as f:
+        with open(urcmn.get_system_conf_file_path(), "rb") as f:
             self.system_conf = tomllib.load(f)
 
         # 最上位のパネル
@@ -87,12 +80,9 @@ class InputFrame(wx.Frame):
 
         try:
             self.usage_recorder = ur.UsageRecorder()
-        except FileNotFoundError as e:
+        except (FileNotFoundError, OSError) as e:
             wx.LogError(str(e))
-            sys.exit("FileNotFoundError")
-        except OSError as e:
-            wx.LogError(str(e))
-            sys.exit("OSError")
+            sys.exit(type(e).__name__)
         self.recording_state = self.usage_recorder.check_state()
 
         # Excelのデータ入力状況に応じて記録モードを決定する。
@@ -363,10 +353,7 @@ class PurposePanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent, wx.ID_ANY)
 
-        system_conf_file_path = os.path.join(
-            os.path.dirname(__file__), "../conf/system_conf.toml"
-        )
-        with open(system_conf_file_path, "rb") as f:
+        with open(urcmn.get_system_conf_file_path(), "rb") as f:
             self.system_conf = tomllib.load(f)
 
         purpose_label = wx.StaticText(
@@ -399,10 +386,7 @@ class DestinationPanel(wx.Panel):
     def __init__(self, parent):
         super().__init__(parent, wx.ID_ANY)
 
-        system_conf_file_path = os.path.join(
-            os.path.dirname(__file__), "../conf/system_conf.toml"
-        )
-        with open(system_conf_file_path, "rb") as f:
+        with open(urcmn.get_system_conf_file_path(), "rb") as f:
             self.system_conf = tomllib.load(f)
 
         destination_label = wx.StaticText(

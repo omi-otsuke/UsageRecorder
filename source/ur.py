@@ -3,18 +3,15 @@ import os
 from openpyxl import load_workbook
 import tomllib
 from enum import Enum
+import urcmn
 import ure
 
 
 class UsageRecorder:
     def __init__(self):
-        system_conf_file_path = os.path.join(
-            os.path.dirname(__file__), "../conf/system_conf.toml"
-        )
-        with open(system_conf_file_path, "rb") as f:
+        with open(urcmn.get_system_conf_file_path(), "rb") as f:
             self.system_conf = tomllib.load(f)
-        self.base_path = os.path.join(os.path.dirname(__file__), "..")
-        self.output_file_path = self.system_conf["output_file_path"]
+        self.output_file_path = urcmn.get_output_file_path()
         try:
             self.workbook = load_workbook(self.output_file_path)
         except FileNotFoundError as e:
@@ -66,8 +63,7 @@ class UsageRecorder:
 
     def load_user_data(self):
         """ユーザーデータをファイルから読み込む。"""
-        user_data_file_path = os.path.join(self.base_path, "conf/user_data.toml")
-        with open(user_data_file_path, "rb") as f:
+        with open(urcmn.get_user_data_file_path(), "rb") as f:
             return tomllib.load(f)
 
     def read_data(self):

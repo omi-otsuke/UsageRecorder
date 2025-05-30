@@ -11,10 +11,10 @@
 # - パス指定時などにシングルクオート(')で囲むとエスケープが不要になるため便利です。
 # - argumentsリストの0番目の値は何でもよく、実際に渡す引数は1番目以降に入れます。
 # ----------------------------------------------------------------------------
-output_file_path = '../output/automation_sample.xlsx'  # DEBUG
+output_file_path = "output/automation_sample.xlsx"  # DEBUG
 sheet_name = "シート1"
 base_row = 4
-log_file_path = "../log/error.log"
+log_file_path = "log/error.log"
 purpose_choices = ["目的A", "目的B", "目的C"]
 destination_names = ["Server A", "Server B", "Server C", "Server D"]
 # application = 'C:\WINDOWS\system32\mstsc.exe'

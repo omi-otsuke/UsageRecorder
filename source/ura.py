@@ -3,8 +3,8 @@ import datetime
 import os
 import sys
 import tomllib
-import traceback
 import wx.adv
+import urlog
 import vld
 import ur
 import ure
@@ -15,7 +15,16 @@ import ure
 
 class UsageRecorderApp(wx.App):
     def OnInit(self):
-        wx.Log.SetActiveTarget(LogFile("../log/error.log"))
+        system_conf_file_path = os.path.join(
+            os.path.dirname(__file__), "../conf/system_conf.toml"
+        )
+        with open(system_conf_file_path, "rb") as f:
+            self.system_conf = tomllib.load(f)
+        wx.Log.SetActiveTarget(urlog.LogFile(self.system_conf["log_file_path"]))
+        # NOTE: LogXXXインスタンスを属性で保持することによって、segmentation faultの
+        # 発生を防止している。
+        self.log_message_box = urlog.LogMessageBox()
+        self.log_chain = wx.LogChain(self.log_message_box)
         frame = InputFrame()
         frame.Show()
         return True
@@ -78,11 +87,11 @@ class InputFrame(wx.Frame):
 
         try:
             self.usage_recorder = ur.UsageRecorder()
-        except FileNotFoundError:
-            wx.LogError(traceback.format_exc())
+        except FileNotFoundError as e:
+            wx.LogError(str(e))
             sys.exit("FileNotFoundError")
-        except OSError:
-            wx.LogError(traceback.format_exc())
+        except OSError as e:
+            wx.LogError(str(e))
             sys.exit("OSError")
         self.recording_state = self.usage_recorder.check_state()
 
@@ -464,30 +473,6 @@ class DecisionButtonPanel(wx.Panel):
         self.SetSizer(layout)
 
 
-class LogFile(wx.Log):
-    """ログファイルに出力するためのログターゲット。"""
-
-    def __init__(self, filepath):
-        wx.Log.__init__(self)
-        formatter = CustomLogFormatter()
-        self.SetFormatter(formatter)
-        self.filepath = filepath
-
-    def DoLogText(self, message):
-        with open(self.filepath, "a", encoding="utf-8") as f:
-            f.write(message + os.linesep)
-
-
-class CustomLogFormatter(wx.LogFormatter):
-    def Format(self, level, message, info):
-        timestamp = datetime.datetime.fromtimestamp(info.timestamp)
-        return f"{timestamp:%Y-%m-%d %H:%M:%S} - {message}"
-
-
 if __name__ == "__main__":
-    wx.Log.SetActiveTarget(LogFile("../log/error.log"))
-    try:
-        app = UsageRecorderApp()
-        app.MainLoop()
-    except Exception as e:
-        wx.LogError(f"想定外のエラーが発生しました: {e}")
+    app = UsageRecorderApp()
+    app.MainLoop()
